@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/widgets/paginated_user_list.dart';
 import 'package:myapp/widgets/profile_button.dart';
-import 'package:myapp/widgets/users_data_table.dart';
+import 'package:provider/provider.dart';
+import 'package:myapp/providers/user_list_provider.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -15,14 +17,23 @@ class MainScreen extends StatelessWidget {
         ),
         backgroundColor: Theme.of(context).primaryColor,
         actions: const [
-          ProfileButton()
+          ProfileButton(),
         ],
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          child: DataTableExample(),
-        ),
+      body: FutureBuilder(
+        future: Provider.of<UserListProvider>(context, listen: false).fetchUsers(context, 1),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: PaginatedUserList(),
+            );
+          }
+        },
       ),
     );
   }

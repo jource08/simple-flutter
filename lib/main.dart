@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:myapp/constants/app_const.dart';
 import 'package:myapp/providers/session_provider.dart';
+import 'package:myapp/providers/user_list_provider.dart';
 import 'package:myapp/screens/login_screen.dart';
 import 'package:myapp/screens/main_screen.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +22,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<SessionProvider>(
           create: (context) => SessionProvider(),
+        ),
+        ChangeNotifierProvider<UserListProvider>(
+          create: (context) => UserListProvider(),
         ),
       ],
       child: MaterialApp(
