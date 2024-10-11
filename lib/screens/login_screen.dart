@@ -11,7 +11,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController usernameController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
     final sessionProvider = Provider.of<SessionProvider>(context);
     final TextEditingController passwordController = TextEditingController();
     return SafeArea(
@@ -28,10 +28,10 @@ class LoginScreen extends StatelessWidget {
                   height: 16,
                 ),
                 TextField(
-                  controller: usernameController,
+                  controller: emailController,
                   decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.person),
-                    label: Text("Username"),
+                    label: Text("Email"),
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -70,7 +70,7 @@ class LoginScreen extends StatelessWidget {
                   child: TextButton(
                     onPressed: () async {
                       ScaffoldMessenger.of(context).clearSnackBars();
-                      String username = usernameController.text.trim();
+                      String username = emailController.text.trim();
                       String password = passwordController.text.trim();
                       if (username.isEmpty || password.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
