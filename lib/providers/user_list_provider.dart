@@ -6,6 +6,9 @@ import 'package:myapp/providers/session_provider.dart';
 import 'package:provider/provider.dart';
 
 class UserListProvider with ChangeNotifier {
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
   List<User> _users = [];
   int _currentPage = 1;
   int _totalPages = 1;
@@ -25,6 +28,11 @@ class UserListProvider with ChangeNotifier {
   }
 
   Future<void> fetchUsers(BuildContext context, int page) async {
+    _isLoading = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();  
+    });
+
     try {
       String cookie =
           Provider.of<SessionProvider>(context, listen: false).authCookie;
@@ -45,13 +53,32 @@ class UserListProvider with ChangeNotifier {
             .map((userJson) => User.fromJson(userJson))
             .toList();
 
-        cacheUsers(fetchedUsers, response.data['currentPage'], response.data['totalPages']);
+        cacheUsers(fetchedUsers, response.data['currentPage'],
+            response.data['totalPages']);
       } else {
         debugPrint('Error fetching users: ${response.statusCode}');
+        // Reset data in case of failure
+        _users = [];
+        _currentPage = 1;
+        _totalPages = 1;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          notifyListeners();  // Notify listeners after the current build phase
+        });
       }
+      _isLoading = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();  // Notify listeners after the current build phase
+      });
     } catch (error) {
+      _isLoading = false;
+      _users = []; // Reset in case of error
+      _currentPage = 1;
+      _totalPages = 1;
       debugPrint('Error occurred while fetching users: $error');
-      throw error;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();  // Notify listeners after the current build phase
+      });
+      throw error; // Re-throw error after handling
     }
   }
 

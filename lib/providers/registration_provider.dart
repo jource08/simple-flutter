@@ -40,6 +40,7 @@ class RegistrationProvider extends ChangeNotifier {
 
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Registration successful!')));
+            // TODO : after register -> login -> there should no back button
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (_) => const LoginScreen()));
       } else {
