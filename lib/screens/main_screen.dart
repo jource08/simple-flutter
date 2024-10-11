@@ -28,8 +28,8 @@ class MainScreen extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            return const Padding(
-              padding: EdgeInsets.all(8.0),
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
               child: PaginatedUserList(),
             );
           }
