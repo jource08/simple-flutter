@@ -127,7 +127,7 @@ class LoginProvider with ChangeNotifier {
         );
       }
     } on DioException catch (e) {
-      _errorMessage = 'Login failed: ${e.response?.data ?? e.message}';
+      _errorMessage = 'Login failed: ${e.response?.data["message"] ?? e.message}';
       notifyListeners();
 
       // Show error message in Snackbar

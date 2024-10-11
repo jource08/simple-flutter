@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:myapp/constants/app_const.dart';
+import 'package:myapp/providers/forgot_password_provider.dart';
 import 'package:myapp/providers/login_provider.dart';
 import 'package:myapp/providers/registration_provider.dart';
 import 'package:myapp/providers/session_provider.dart';
@@ -33,6 +34,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<LoginProvider>(
           create: (context) => LoginProvider(),
+        ),
+        ChangeNotifierProvider<ForgotPasswordProvider>(
+          create: (context) => ForgotPasswordProvider(),
         ),
       ],
       child: MaterialApp(

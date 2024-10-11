@@ -7,6 +7,8 @@ class AppConst {
 
   static const String loginUrl = "$baseUrl/auth/login";
   static const String registerUrl = "$baseUrl/auth/register";
+  static const String forgotPasswordUrl = "$baseUrl/auth/forgot-password";
+  static const String resetPasswordUrl = "$baseUrl/auth/reset-password";
   static const String listUserUrl = "$baseUrl/users";
 
   static const String loginSessionPrefKey = "session";
