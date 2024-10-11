@@ -78,7 +78,7 @@ class UserListProvider with ChangeNotifier {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();  // Notify listeners after the current build phase
       });
-      throw error; // Re-throw error after handling
+      rethrow; // Re-throw error after handling
     }
   }
 
