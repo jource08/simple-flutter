@@ -6,6 +6,13 @@ A new Flutter project.
 
 - update endpoint at `lib\constants\app_const.dart`
 
+## Features
+- Login
+- Register
+    - Password validation (upper and lower case letters, a number, and a symbol)
+- Paginated User List
+- Pull to refresh
+
 ## References
 
 Few references for this project

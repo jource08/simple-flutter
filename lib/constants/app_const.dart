@@ -6,6 +6,7 @@ class AppConst {
   static const String imgBaseUrl = "$baseUrl/images";
 
   static const String loginUrl = "$baseUrl/auth/login";
+  static const String registerUrl = "$baseUrl/auth/register";
   static const String listUserUrl = "$baseUrl/users";
 
   static const String loginSessionPrefKey = "session";

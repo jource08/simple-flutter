@@ -1,11 +1,3 @@
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:2527159535.
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:1623168734.
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:2153736940.
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:517167100.
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:3471127712.
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:379432333.
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:100099515.
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:3897818102.
 import 'package:flutter/material.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
