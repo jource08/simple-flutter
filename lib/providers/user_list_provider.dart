@@ -16,6 +16,14 @@ class UserListProvider with ChangeNotifier {
   int get totalPages => _totalPages;
   int get limit => _limit;
 
+  // Cache user data
+  void cacheUsers(List<User> fetchedUsers, int currentPage, int totalPages) {
+    _users = fetchedUsers;
+    _currentPage = currentPage;
+    _totalPages = totalPages;
+    notifyListeners();
+  }
+
   Future<void> fetchUsers(BuildContext context, int page) async {
     try {
       String cookie =
@@ -37,11 +45,7 @@ class UserListProvider with ChangeNotifier {
             .map((userJson) => User.fromJson(userJson))
             .toList();
 
-        _users = fetchedUsers;
-        _totalPages = response.data['totalPages'];
-        _currentPage = response.data['currentPage'];
-
-        notifyListeners();
+        cacheUsers(fetchedUsers, response.data['currentPage'], response.data['totalPages']);
       } else {
         debugPrint('Error fetching users: ${response.statusCode}');
       }

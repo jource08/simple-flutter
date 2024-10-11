@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:myapp/providers/user_list_provider.dart';
+import 'package:provider/provider.dart';
 
 class PaginatedUserList extends StatelessWidget {
   const PaginatedUserList({super.key});
+
+  Future<void> _onRefresh(BuildContext context) async {
+    // Trigger a refresh by re-fetching the data
+    await Provider.of<UserListProvider>(context, listen: false).fetchUsers(context, 1);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,24 +17,39 @@ class PaginatedUserList extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: ListView.builder(
-            itemCount: userProvider.users.length,
-            itemBuilder: (context, index) {
-              final user = userProvider.users[index];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: user.profileImageUrl != null
-                      ? NetworkImage(user.profileImageUrl!)
-                      : null,
-                  child: user.profileImageUrl == null
-                      ? const Icon(Icons.person)
-                      : null,
-                ),
-                title: Text(user.fullname ?? ""),
-                subtitle: Text(user.email ?? ""),
-                trailing: const Icon(Icons.arrow_forward),
-              );
-            },
+          child: RefreshIndicator(
+            onRefresh: () => _onRefresh(context),
+            child: ListView.builder(
+              itemCount: userProvider.users.length,
+              itemBuilder: (context, index) {
+                final user = userProvider.users[index];
+                return ListTile(
+                  leading: ClipOval(
+                    child: user.profileImageUrl != null
+                        ? Image.network(
+                            user.profileImageUrl!,
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, progress) {
+                              if (progress == null) {
+                                return child;
+                              } else {
+                                return const Icon(Icons.person, size: 40); // Placeholder while loading
+                              }
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.error, size: 40); // Error icon
+                            },
+                          )
+                        : const Icon(Icons.person, size: 40), // Default icon if no profile image
+                  ),
+                  title: Text(user.fullname ?? ""),
+                  subtitle: Text(user.email ?? ""),
+                  trailing: const Icon(Icons.arrow_forward),
+                );
+              },
+            ),
           ),
         ),
         Row(
