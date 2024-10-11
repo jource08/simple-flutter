@@ -116,44 +116,47 @@ class LoginScreen extends StatelessWidget {
     ));
   }
 }
-
 void doLogin(BuildContext context, String username, String password) async {
   Dio dio = Dio();
 
   try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     Response<dynamic> loginResponse = await dio.post(AppConst.loginUrl, data: {
-      "username": username,
+      "email": username,
       "password": password,
     });
 
-    if (loginResponse.statusCode == 200) {
-      // Fetch user details
-      Response<dynamic> userDetailResponse = await dio.get(
-        "${AppConst.listUserUrl}?user_name=${loginResponse.data["username"]}",
-        options: Options(
-          method: 'GET',
-        ),
-      );
+    // Extract cookie from the headers
+    String? cookie = loginResponse.headers['set-cookie']?.firstWhere(
+      (header) => header.startsWith('NODEJS-API-AUTH'),
+      orElse: () => '',
+    );
+
+    // Assuming the response contains a list of users, extract the first user
+    var dataList = loginResponse.data;
+    if (dataList is List && dataList.isNotEmpty && cookie != null && cookie.isNotEmpty) {
+      var userData = dataList[0]; // Extract the first user from the list
 
       User user = User(
-        id: userDetailResponse.data["id"],
-        username: userDetailResponse.data["username"],
-        email: userDetailResponse.data["email"],
-        fullname: userDetailResponse.data["fullname"],
-        bio: userDetailResponse.data["bio"],
-        profileImageUrl: userDetailResponse.data["profile_image_url"],
+        id: userData["id"],
+        username: userData["username"],
+        email: userData["email"],
+        fullname: userData["fullname"],
+        bio: userData["bio"],
+        profileImageUrl: userData["profile_image_url"],
       );
 
-      // Save to SharedPreferences
+      // Save user data to SharedPreferences
       String mydata = jsonEncode({
         AppConst.userPrefKey: user.toJson(),
+        AppConst.cookiePrefKey: cookie,
       });
-      SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString(AppConst.loginSessionPrefKey, mydata);
 
       Provider.of<SessionProvider>(context, listen: false).setUser(user);
+      Provider.of<SessionProvider>(context, listen: false).setAuthCookie(cookie);
 
-      // Show success snackbar
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Login successful!"),
@@ -165,21 +168,19 @@ void doLogin(BuildContext context, String username, String password) async {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => const MainScreen()));
     } else {
-      // Show error snackbar for failed login
+      // If the response doesn't contain a valid user list, show an error
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Login failed: ${loginResponse.statusMessage}"),
+        const SnackBar(
+          content: Text("Invalid login response"),
           backgroundColor: Colors.red,
         ),
       );
     }
   } on DioException catch (e) {
-    debugPrint(e.toString());
     // Show error snackbar for Dio exceptions
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        // content: Text("Error: ${e.message}"),
-        content: Text("Error: Login failed"),
+      SnackBar(
+        content: Text("Login failed: ${e.response?.data ?? e.message}"),
         backgroundColor: Colors.red,
       ),
     );

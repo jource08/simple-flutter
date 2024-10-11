@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:myapp/providers/session_provider.dart';
+import 'package:myapp/models/user_model.dart';
 
-class ProfileEditScreen extends StatefulWidget {
+class ProfileEditScreen extends StatelessWidget {
   const ProfileEditScreen({super.key});
 
   @override
-  _ProfileEditScreenState createState() => _ProfileEditScreenState();
-}
-
-class _ProfileEditScreenState extends State<ProfileEditScreen> {
-  @override
   Widget build(BuildContext context) {
+    final User? user = Provider.of<SessionProvider>(context).user;
+
+    final TextEditingController nameController =
+        TextEditingController(text: user?.fullname);
+    final TextEditingController bioController =
+        TextEditingController(text: user?.bio);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
@@ -17,7 +22,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           IconButton(
             icon: const Icon(Icons.check),
             onPressed: () {
-              // Save changes
+              if (user != null) {
+                Provider.of<SessionProvider>(context, listen: false)
+                    .setUser(user.copyWith(
+                  fullname: nameController.text.trim(),
+                  bio: bioController.text.trim(),
+                ));
+              }
               Navigator.pop(context);
             },
           ),
@@ -27,56 +38,68 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 60,
-              backgroundImage:
-                  AssetImage('assets/profile.png'), // Replace with actual image
+              backgroundImage: user?.profileImageUrl != null
+                  ? NetworkImage(user!.profileImageUrl!)
+                  : null,
+              child: user?.profileImageUrl == null
+                  ? const Icon(
+                      Icons.person,
+                      size: 50,
+                    )
+                  : null,
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-                onPressed: () {
-                  showModalBottomSheet<void>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return SizedBox(
-                        height: 200,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              InkWell(
-                                onTap: () {},
-                                child: const ListTile(
-                                  leading: Icon(Icons.image),
-                                  title: Text("From gallery"),
-                                ),
+              onPressed: () {
+                showModalBottomSheet<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return SizedBox(
+                      height: 200,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            InkWell(
+                              onTap: () {
+                                // TODO: Implement gallery image picker
+                              },
+                              child: const ListTile(
+                                leading: Icon(Icons.image),
+                                title: Text("From gallery"),
                               ),
-                              InkWell(
-                                onTap: () {},
-                                child: const ListTile(
-                                  leading: Icon(Icons.camera_alt),
-                                  title: Text("From camera"),
-                                ),
-                              )
-                            ],
-                          ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                // TODO:Implement camera image picker
+                              },
+                              child: const ListTile(
+                                leading: Icon(Icons.camera_alt),
+                                title: Text("From camera"),
+                              ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  );
-                },
-                child: const Text("Change profile picture")),
-            const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(labelText: 'Name'),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: const Text("Change profile picture"),
             ),
             const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(labelText: 'About'),
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Name'),
             ),
             const SizedBox(height: 16),
-            // Add more fields as needed (e.g., phone number, email)
+            TextField(
+              controller: bioController,
+              decoration: const InputDecoration(labelText: 'About'),
+            ),
           ],
         ),
       ),

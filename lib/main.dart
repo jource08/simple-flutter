@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: "My Warehouse",
+        title: "Simple Flutter",
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: AppConst.colorPrimary),
           primaryColor: AppConst.colorPrimary,

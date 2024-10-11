@@ -17,4 +17,12 @@ class SessionProvider with ChangeNotifier {
     _user = user;
     notifyListeners();
   }
+
+  String _authCookie = "";
+  String get authCookie => _authCookie;
+
+  void setAuthCookie(String authCookie) {
+    _authCookie = authCookie;
+    notifyListeners();
+  }
 }

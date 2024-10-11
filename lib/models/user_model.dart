@@ -14,6 +14,24 @@ class User {
       this.bio,
       this.profileImageUrl});
 
+  User copyWith({
+    int? id,
+    String? username,
+    String? email,
+    String? fullname,
+    String? bio,
+    String? profileImageUrl,
+  }) {
+    return User(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      fullname: fullname ?? this.fullname,
+      bio: bio ?? this.bio,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+    );
+  }
+
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     username = json['username'];
